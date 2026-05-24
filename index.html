@@ -94,31 +94,15 @@
 
         // To lower canvas resolution on mobile devices to gain some
         // performance, uncomment the following line:
-        //config.devicePixelRatio = 1;
+        config.devicePixelRatio = 1;
 
-      canvas.style.background = "url('" + buildUrl + "/Builds.jpg') center / cover";
-      document.querySelector("#unity-loading-bar").style.display = "block";
 
-      var script = document.createElement("script");
-      script.src = loaderUrl;
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-              }).then((unityInstance) => {
-                document.querySelector("#unity-loading-bar").style.display = "none";
-              }).catch((message) => {
-                alert(message);
-              });
-            };
-
-      document.body.appendChild(script);
-
-       } else {
+       } /* else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-        //canvas.style.width = "960px";
-        //canvas.style.height = "600px";
-      
-        //config.devicePixelRatio = 1;
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      } */
+
       canvas.style.background = "url('" + buildUrl + "/Builds.jpg') center / cover";
       document.querySelector("#unity-loading-bar").style.display = "block";
 
@@ -129,13 +113,14 @@
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
               }).then((unityInstance) => {
                 document.querySelector("#unity-loading-bar").style.display = "none";
+
               }).catch((message) => {
                 alert(message);
               });
             };
 
       document.body.appendChild(script);
-          }
+
     </script>
   </body>
 </html>
