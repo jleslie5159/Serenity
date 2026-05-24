@@ -23,7 +23,23 @@
 
         document.body.style.textAlign = "left";
 
-      }
+        createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: "Build/Builds.data.unityweb",
+        frameworkUrl: "Build/Builds.framework.js.unityweb",
+        codeUrl: "Build/Builds.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "Serenity",
+        productVersion: "0.1",
+        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+        //devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+      }).then((unityInstance) => {
+      }).catch((message) => {
+        alert(message);
+        });
+      } else {
+      
 
       createUnityInstance(document.querySelector("#unity-canvas"), {
         arguments: [],
@@ -35,11 +51,11 @@
         productName: "Serenity",
         productVersion: "0.1",
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+        //devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       }).then((unityInstance) => {
       }).catch((message) => {
         alert(message);
-      });
+      });}
     </script>
   </body>
 </html>
