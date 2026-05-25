@@ -2,10 +2,10 @@ body { padding: 0; margin: 0; width: 100%; height: 100%; overflow: hidden; }
 #unity-container { width: 100%; height: 100%; position: fixed; top: 0; left: 0; }
 #unity-container.unity-desktop { left: 50%; top: 50%; transform: translate(-50%, -50%) }
 #unity-container.unity-mobile { position: fixed; width: 100%; height: 100% }
-#unity-canvas { width: 100% !important; height: 100% !important; display: block; background: #231F20 }
+#unity-canvas { width: 100% !important; height: 100% !important; display: block; background: #000000 }
 .unity-mobile #unity-canvas { width: 100%; height: 100%; position: fixed;  }
 #unity-loading-bar { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 960px; height: 600px; display: none }
-#heart_background { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Background.jpg') no-repeat center }
+#heart_background { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Background.jpg') center / cover no-repeat }
 #heart_01 { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Heart_ForegroundBlurred.png') center / cover no-repeat }
 #heart_02 { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Heart_ForegroundBlurred.png') center / cover no-repeat }
 #unity-progress-bar-empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 141px; height: 18px; background: url('progress-bar-empty-dark.png') no-repeat center }
