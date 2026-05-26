@@ -8,7 +8,8 @@ body { padding: 0; margin: 0; width: 100%; height: 100%; overflow: hidden; }
 #heart_background { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Background.jpg') center / cover no-repeat }
 #heart_01 { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Heart_ForegroundBlurred.png') center / cover no-repeat }
 #heart_02 { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100vw; height: 100vh; background: url('Heart_ForegroundBlurred.png') center / cover no-repeat }
-#unity-progress-bar-empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 141px; height: 18px; background: url('progress-bar-empty-dark.png') no-repeat center }
-#unity-progress-bar-full { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 0%; height: 18px; background: url('progress-bar-full-dark.png') no-repeat center }
+#loadingText01 { position: absolute;  left: 50%; top: 50%; transform: translate(-50%, -60%); width: 175vw; height: 70vh; background: url('Loading.png') no-repeat center }
+#unity-progress-bar-empty { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 141px; height: 100%; background: url('progress-bar-empty-dark.png') no-repeat center }
+#unity-progress-bar-full { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 0%; height: 100%; background: url('progress-bar-full-dark.png') no-repeat center }
 #unity-build-title { float: right; margin-right: 10px; line-height: 38px; font-family: arial; font-size: 18px }
 #unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
