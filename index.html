@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FluidSim</title>
+    <style>
+      :root {
+        --vp-w: 100%;
+        --vp-h: 100dvh;
+        --sa-top: env(safe-area-inset-top, 0px);
+        --sa-right: env(safe-area-inset-right, 0px);
+        --sa-bottom: env(safe-area-inset-bottom, 0px);
+        --sa-left: env(safe-area-inset-left, 0px);
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        overscroll-behavior: none;
+        background-color: #07080c;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #unity-container,
+      #unity-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        width: var(--vp-w, 100%);
+        height: var(--vp-h, 100dvh);
+        display: block;
+        outline: none;
+      }
+      #loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        width: var(--vp-w, 100%);
+        height: var(--vp-h, 100dvh);
+        background-color: #07080c;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.25s ease-out;
+      }
+      #loading-bar-container {
+        width: 240px;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.12);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      #loading-bar-fill {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #33bbff, #00ff88);
+        border-radius: 3px;
+        transition: width 0.15s ease-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div id="loading-overlay">
+        <div id="loading-bar-container">
+          <div id="loading-bar-fill"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const rootEl = document.documentElement;
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingOverlay = document.querySelector("#loading-overlay");
+      const loadingBarFill = document.querySelector("#loading-bar-fill");
+
+      let lastVpW = -1;
+      let lastVpH = -1;
+      let syncRafId = 0;
+      let syncTimeoutA = 0;
+      let syncTimeoutB = 0;
+
+      function getVisibleViewportSize() {
+        const clientW = rootEl && rootEl.clientWidth ? rootEl.clientWidth : 0;
+        const clientH = rootEl && rootEl.clientHeight ? rootEl.clientHeight : 0;
+        let w = window.innerWidth || clientW || 1280;
+        let h = window.innerHeight || clientH || 720;
+        const vv = window.visualViewport;
+        if (vv && vv.width > 0 && vv.height > 0 && (!vv.scale || vv.scale <= 1.02)) {
+          w = Math.min(w, vv.width);
+          h = Math.min(h, vv.height);
+        }
+        return {
+          w: Math.max(1, Math.floor(w)),
+          h: Math.max(1, Math.floor(h))
+        };
+      }
+
+      function syncViewportSize() {
+        const size = getVisibleViewportSize();
+        if (size.w !== lastVpW || size.h !== lastVpH) {
+          lastVpW = size.w;
+          lastVpH = size.h;
+          rootEl.style.setProperty("--vp-w", size.w + "px");
+          rootEl.style.setProperty("--vp-h", size.h + "px");
+        }
+        if (window.scrollX !== 0 || window.scrollY !== 0) {
+          window.scrollTo(0, 0);
+        }
+      }
+
+      function scheduleViewportSync() {
+        syncViewportSize();
+        if (syncRafId) cancelAnimationFrame(syncRafId);
+        syncRafId = requestAnimationFrame(syncViewportSize);
+        clearTimeout(syncTimeoutA);
+        clearTimeout(syncTimeoutB);
+        syncTimeoutA = setTimeout(syncViewportSize, 120);
+        syncTimeoutB = setTimeout(syncViewportSize, 320);
+      }
+
+      syncViewportSize();
+      window.addEventListener("resize", scheduleViewportSync, { passive: true });
+      window.addEventListener("orientationchange", scheduleViewportSync, { passive: true });
+      window.addEventListener("pageshow", scheduleViewportSync, { passive: true });
+      document.addEventListener("fullscreenchange", scheduleViewportSync, { passive: true });
+      document.addEventListener("webkitfullscreenchange", scheduleViewportSync, { passive: true });
+      if (window.screen && window.screen.orientation && window.screen.orientation.addEventListener) {
+        window.screen.orientation.addEventListener("change", scheduleViewportSync);
+      }
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", scheduleViewportSync, { passive: true });
+        window.visualViewport.addEventListener("scroll", scheduleViewportSync, { passive: true });
+      }
+
+      const buildUrl = "Build";
+      const loaderUrl = buildUrl + "/Builds.loader.js";
+      const config = {
+        dataUrl: buildUrl + "/Builds.data",
+        frameworkUrl: buildUrl + "/Builds.framework.js",
+        codeUrl: buildUrl + "/Builds.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "FluidSim",
+        productVersion: "0.1.0",
+        matchWebGLToCanvasSize: true,
+        devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2)
+      };
+
+      const script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          if (loadingBarFill) {
+            loadingBarFill.style.width = (100 * progress) + "%";
+          }
+        }).then((unityInstance) => {
+          if (loadingOverlay) {
+            loadingOverlay.style.opacity = "0";
+            setTimeout(() => {
+              loadingOverlay.style.display = "none";
+            }, 250);
+          }
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
